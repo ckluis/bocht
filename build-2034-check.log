@@ -1,0 +1,12 @@
+SOME PROOFS FAIL
+Error:
+- expected : String
+- observed : U32
+Context:
+- budget : Nat
+- st     : MedState
+Location: main_boot_ok
+8747 |       do IO<Unit>:
+8748>|         lr : Result<&1, &1, U32 & String, Listener> <- TCP.listen(18081)
+     |                                                                   ^^^^^
+8749 |         main_listen_res(budget, lr, st)
