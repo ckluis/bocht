@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bocht: a whole backend in one Bend binary</title>
+<meta name="description" content="The Bend series, part 1: a backend framework written by an AI app builder as one Bend program (HTTP, auth, rate limits, WAL storage, REST and MCP) compiled to a single native binary.">
+<link rel="canonical" href="https://ckluis.github.io/experiments/bend/bocht/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ckluis / experiments">
+<meta property="og:url" content="https://ckluis.github.io/experiments/bend/bocht/">
+<meta property="og:title" content="bocht: a whole backend in one Bend binary">
+<meta property="og:description" content="HTTP, auth, rate limits, a write-ahead log, REST and MCP: one Bend program, one binary, no sidecars. Part 1 of the Bend series.">
+<meta property="og:image" content="https://ckluis.github.io/experiments/previews/social-bend-bocht.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="bocht: the whole backend as one 1.97 MB arm64 binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@ckluis">
+<meta name="twitter:creator" content="@ckluis">
+<meta name="twitter:title" content="bocht: a whole backend in one Bend binary">
+<meta name="twitter:description" content="HTTP, auth, rate limits, a write-ahead log, REST and MCP: one Bend program, one binary, no sidecars. Part 1 of the Bend series.">
+<meta name="twitter:image" content="https://ckluis.github.io/experiments/previews/social-bend-bocht.png">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/series.css">
+</head>
+<body>
+<a href="https://ckluis.github.io/experiments/" class="xa-back" aria-label="Back to all experiments"><span class="xa-arrow">←</span> Experiments</a>
+<header class="hero">
+  <div class="wrap">
+    <nav class="rail reveal" aria-label="The Bend series"><span class="rl">The Bend series</span><a href="../index.html"><span class="i">00</span>Series</a><a href="../bocht/index.html" aria-current="page"><span class="i">01</span>bocht</a><a href="../bochtCMS/index.html"><span class="i">02</span>bochtCMS</a><a href="../shellOS/index.html"><span class="i">03</span>shellOS</a></nav>
+    <div>
+      <div class="eyebrow reveal">01 · The framework · Sept 2026</div>
+      <h1 class="reveal d1">bocht<span class="def">/bɔxt/ · Dutch, noun — a bend, a curve</span></h1>
+      <p class="tag reveal d2">A whole backend, <em>one</em> Bend program, one binary.</p>
+      <p class="lede reveal d2">An AI app builder wrote a backend framework as a single Bend program: HTTP, auth,
+        rate limits, a write-ahead log, REST and MCP, compiled through C into one native binary with no database,
+        no proxy and no queue beside it. It shipped with a verification discipline worth stealing. This page is the
+        framework and that discipline; <a href="../bochtCMS/index.html" style="color:#fff">bochtCMS</a> is the app
+        built on top, and the curve its tests missed.</p>
+      <div class="hstats reveal d3">
+        <div><div class="n">8,777</div><div class="l">lines of Bend (r61)</div></div>
+        <div><div class="n">1,363</div><div class="l">definitions</div></div>
+        <div><div class="n">20</div><div class="l">routes</div></div>
+        <div><div class="n">0</div><div class="l">sidecars</div></div>
+      </div>
+      <nav class="jump reveal d3" aria-label="Sections">
+        <a href="#framework">01 Framework</a><a href="#process">02 Method</a><a href="#open">03 Still open</a><a href="#series">The series</a>
+      </nav>
+    </div>
+
+    <figure class="spec reveal d2" aria-label="The whole backend is one arm64 binary of about 1.97 MB.">
+      <div class="lab"><span>The whole service</span><span>arm64 · as built with the CMS</span></div>
+      <div class="x">1.97<small>MB</small></div>
+      <div class="c">one native binary · Bend 2.0.34 · builds in ~25 s</div>
+      <div class="chips">
+        <span>HTTP/1.1 keep-alive</span><span>bearer keys · roles</span><span>rate limits</span><span>20 routes</span>
+        <span class="k">segmented WAL + fsync</span><span class="k">HMAC-bound snapshots</span><span>POST /mcp</span><span>SHA-256 in pure Bend</span>
+      </div>
+      <div class="no">
+        <div><b>0</b>database processes</div>
+        <div><b>0</b>reverse proxies</div>
+        <div><b>12</b>C effects</div>
+      </div>
+    </figure>
+  </div>
+</header>
+<section class="sec" id="framework"><div class="wrap">
+  <div class="sh">
+    <div class="num reveal">01 — The framework</div>
+    <h2 class="reveal d1">One process. <em>No sidecars.</em></h2>
+    <p class="reveal d2">Bocht is a backend framework written as one <a href="https://bend-lang.com" target="_blank" rel="noopener">Bend</a> program. Bend compiles it to C, clang compiles that to a single native binary, and that binary is the whole service: no database process, no reverse proxy, no queue. Everything a request touches lives in the same address space.</p>
+  </div>
+
+  <div class="arch">
+    <div class="binary reveal" role="img" aria-label="Request path inside the single binary, from socket to disk">
+      <div class="bh"><span class="t">Inside the binary · request path</span><span class="s">1.97 MB · arm64 · builds in ~25 s</span></div>
+      <div class="layer"><div class="ln">Socket</div><div class="ld"><b>HTTP/1.1 with keep-alive</b> — 100 requests per connection, 64 KB body cap, clean 400/411/413/431 on malformed input.</div></div>
+      <div class="flow"></div>
+      <div class="layer"><div class="ln">Auth</div><div class="ld"><b>Bearer keys</b> scoped to a tenant and a role (admin or member), with rotate and revoke endpoints. No token, no parsing: a 401 comes back before the body is read as JSON.</div></div>
+      <div class="flow"></div>
+      <div class="layer"><div class="ln">Limits</div><div class="ld"><b>Per-credential rate limits</b>, plus separate budgets for key management and admin restarts. Bursts get a 429, not a crash.</div></div>
+      <div class="flow"></div>
+      <div class="layer"><div class="ln">Router</div><div class="ld"><b>20 routes</b>: keys, users, articles, claps, publications, members and an event feed over REST — and <code>POST /mcp</code> for the CMS.</div></div>
+      <div class="flow"></div>
+      <div class="layer store"><div class="ln">Store</div><div class="ld"><b>Segmented write-ahead log</b> (64 MiB segments, fsync'd) plus <b>snapshots</b> whose trailer binds the record count and an HMAC. A forged or truncated snapshot is refused at boot.</div></div>
+      <div class="disk"><span>wal/active/seg-000001.wal</span><span>wal/archive/2026/09/…</span><span>bocht.snapshot</span></div>
+    </div>
+
+    <div>
+      <div class="facts">
+        <div class="fact reveal"><div class="n">1,505</div><div class="l">definitions and 22 types in one source file</div></div>
+        <div class="fact reveal d1"><div class="n">12</div><div class="l">custom C effects for fsync, directory ops, socket timeouts and HMAC</div></div>
+        <div class="fact reveal"><div class="n">SHA-256</div><div class="l">implemented in pure Bend, not linked in</div></div>
+        <div class="fact reveal d1"><div class="n">0</div><div class="l">proofs — Bend can check them; Bocht doesn't write any</div></div>
+      </div>
+      <div class="honest reveal">
+        <h4>Honest limits</h4>
+        <ul>
+          <li>Single node. No replication, sharding or consensus.</li>
+          <li>The log survives the process dying, not the power going out.</li>
+          <li>One request at a time. A slow request blocks every client — which is why <a href="../bochtCMS/index.html#curve">the curve in bochtCMS</a> mattered.</li>
+          <li>Bend moves fast: the builder reports breaking changes in every release from 2.0.18 to 2.0.34, and the pinned r61 release doesn't build on 2.0.34 (confirmed).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div></section><section class="sec alt" id="process"><div class="wrap">
+  <div class="sh">
+    <div class="num reveal">02 — The method</div>
+    <h2 class="reveal d1">Built by one AI. <em>Checked by another.</em></h2>
+    <p class="reveal d2">I didn't write Bocht. I directed an AI app builder that wrote it, and it worked under a verification discipline worth stealing: no claim ships unless it can be re-derived from files on disk.</p>
+  </div>
+
+  <div class="method">
+    <div class="mstep reveal"><div class="i">1 · Probe</div><h4>Every capability has a script</h4><p>Each one ends with one canonical line: <code>RESULT: PASS=n FAIL=0</code>. No line, no claim.</p></div>
+    <div class="mstep reveal d1"><div class="i">2 · Manifest</div><h4>Results bound to a binary</h4><p>A stamp script writes the exact binary's SHA-256 next to every result file it produced.</p></div>
+    <div class="mstep reveal d2"><div class="i">3 · Verify</div><h4>A second script audits the ledger</h4><p>Source hash, binary hash, build exit code and manifest must all agree before "done" is written.</p></div>
+    <div class="mstep reveal d3"><div class="i">4 · Canary</div><h4>The pinned build is watched</h4><p>A read-only backup and a hash sidecar are checked hourly against the live binary.</p></div>
+    <div class="mstep reveal d3"><div class="i">5 · Ledger rule</div><h4>Never say "flawless"</h4><p>Verified claims only. Never production-ready, clustered, replicated or bug-free.</p></div>
+  </div>
+
+  <div class="verdict">
+    <div class="vbox good reveal"><h4>What the discipline got right</h4><ul>
+      <li>Every hash in the bundle matched its README.</li>
+      <li>The 43-test suite reproduced on a different OS and CPU.</li>
+      <li>By the builder's account, its own first run caught a real protocol bug: the tool name read from the wrong object.</li>
+      <li>Writes survived <code>kill -9</code>: 303 of 303 acknowledged writes, and 20 of 20 single-write cycles.</li>
+    </ul></div>
+    <div class="vbox gap reveal d1"><h4>What it can't see</h4><ul>
+      <li>A manifest proves which binary produced a log. It doesn't prove the log tested the right things.</li>
+      <li>All 43 checks used tiny payloads. Nothing timed a realistic post.</li>
+      <li>The suite passed on every version — including the one where a read deleted a post.</li>
+      <li>The shipped verifier needed a ledger file that wasn't in the bundle, so it couldn't be run.</li>
+    </ul></div>
+  </div>
+
+  </div></section>
+<!-- ============================ 03 STILL OPEN ============================ -->
+<section class="sec alt" id="open"><div class="wrap">
+  <div class="sh">
+    <div class="num reveal">03 — Still open</div>
+    <h2 class="reveal d1">What the audit <em>didn't close.</em></h2>
+    <p class="reveal d2">The evaluation fixed the CMS and proved it. The framework release underneath, r61, is pinned and was left as shipped, so these stand.</p>
+  </div>
+  <div class="facts">
+    <div class="fact reveal"><div class="k">Same bug, other door</div><p>The quadratic JSON id parse fixed in bochtCMS likely also sits in r61's REST clap path (<code>jf_raw_go</code> in <code>src/med_parse.bend</code>). Unfixed and unmeasured here.</p></div>
+    <div class="fact reveal d1"><div class="k">Pinned to an old compiler</div><p>r61 was built on an earlier Bend 2.0 release and does not build on 2.0.34 (confirmed). Its own README says both that it does and that it doesn't.</p></div>
+    <div class="fact reveal d2"><div class="k">One node, one request</div><p>No replication, sharding or consensus, and requests run one at a time, so any slow request stalls every client.</p></div>
+    <div class="fact reveal d3"><div class="k">Proof-ready, proof-free</div><p>Bend can check proofs about programs. Bocht writes none; its guarantees come from tests and manifests, not types.</p></div>
+  </div>
+  <p class="note reveal">The full audit, including the curve, the builder's regressions and the one-function fix, is on the <a href="../bochtCMS/index.html">bochtCMS</a> page.</p>
+</div></section>
+
+<!-- ============================ THE BEND SERIES ============================ -->
+<section class="series" id="series"><div class="wrap">
+  <div class="eyebrow reveal">The Bend series</div>
+  <h2 class="reveal d1">One language. Three builds. <em>One auditor.</em></h2>
+  <p class="intro reveal d2">Three programs, one young language, one method. Each was written by an AI app builder in <a href="https://bend-lang.com" target="_blank" rel="noopener">Bend 2</a> under an evidence-first discipline, then handed to Claude Code to check: reproduce every claim, attack it, profile it, fix only what is proven, and show the fix changed nothing else. Every time, the builder's own tests passed, and something real was still wrong.</p>
+  <div class="scards"><div class="scard reveal here"><div class="n">01 · bocht</div><div class="t">bocht</div><p>The framework. A whole backend (HTTP, auth, rate limits, WAL storage, MCP) compiled from one Bend program into one binary.</p><div class="m"><span>8,777 lines</span><span>1 binary</span><span>release r61</span></div><div class="go">You are here</div></div><a class="scard reveal" href="../bochtCMS/index.html"><div class="n">02 · bochtCMS</div><div class="t">bochtCMS</div><p>The app on top. A blog CMS whose only interface is seven MCP tools, and the quadratic curve its 43 passing tests never saw.</p><div class="m"><span>7 MCP tools</span><span>1,200× fix</span><span>0 / 90 diffs</span></div><div class="go">Read the case study →</div></a><a class="scard reveal" href="../shellOS/index.html"><div class="n">03 · shellOS</div><div class="t">shellOS</div><p>The desktop. A single-window shell drawn pixel by pixel in pure Bend: terminal, reader, palette. Ported to a Mac and redesigned.</p><div class="m"><span>9,641 lines</span><span>17 C effects</span><span>3 bugs fixed</span></div><div class="go">Read the case study →</div></a></div>
+  <a class="all reveal" href="../index.html">About the series: the language, the method, what it found →</a>
+</div></section>
+
+<!-- ============================ FOOT ============================ -->
+<footer class="foot"><div class="wrap">
+  <h2>One program. One binary. <em>Everything it claims, re-derivable from disk.</em></h2>
+  <div class="credits"><div class="credit"><div class="k">Framework &amp; CMS</div><p>Generated by an AI app builder under its evidence-first methodology, in Bend 2.0.32–2.0.34.</p></div><div class="credit"><div class="k">Audit &amp; fix</div><p>Claude Code (Opus 5.5): reproduction, adversarial tests, profiling, the one-function fix, and the differential proof.</p></div><div class="credit"><div class="k">Direction</div><p>Chris Kluis: asked for the evaluation, rejected the builder's fix, and chose to publish the case study.</p></div></div>
+  <div class="links"><a href="https://bend-lang.com" target="_blank" rel="noopener">Bend ↗</a><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol ↗</a><a href="https://ckluis.github.io/experiments/">All experiments ↗</a></div>
+  <p class="fine">Status: local. The source and evaluation scripts live in a private repository for now. All timings measured on one Apple-silicon Mac, Bend 2.0.34, 29 Sep 2026. Absolute numbers will differ on other hardware; the slopes won't.</p>
+</div></footer>
+<script src="../assets/series.js"></script>
+</body>
+</html>
