@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>bocht: a whole backend in one Bend binary</title>
 <meta name="description" content="The Bend series, part 1: a backend framework written by an AI app builder as one Bend program (HTTP, auth, rate limits, WAL storage, REST and MCP) compiled to a single native binary.">
-<link rel="canonical" href="https://ckluis.github.io/experiments/bend/bocht/">
+<link rel="canonical" href="https://ckluis.github.io/bocht/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="ckluis / experiments">
-<meta property="og:url" content="https://ckluis.github.io/experiments/bend/bocht/">
+<meta property="og:url" content="https://ckluis.github.io/bocht/">
 <meta property="og:title" content="bocht: a whole backend in one Bend binary">
 <meta property="og:description" content="HTTP, auth, rate limits, a write-ahead log, REST and MCP: one Bend program, one binary, no sidecars. Part 1 of the Bend series.">
-<meta property="og:image" content="https://ckluis.github.io/experiments/previews/social-bend-bocht.png">
+<meta property="og:image" content="https://ckluis.github.io/bocht/assets/social.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="bocht: the whole backend as one 1.97 MB arm64 binary.">
@@ -20,18 +20,18 @@
 <meta name="twitter:creator" content="@ckluis">
 <meta name="twitter:title" content="bocht: a whole backend in one Bend binary">
 <meta name="twitter:description" content="HTTP, auth, rate limits, a write-ahead log, REST and MCP: one Bend program, one binary, no sidecars. Part 1 of the Bend series.">
-<meta name="twitter:image" content="https://ckluis.github.io/experiments/previews/social-bend-bocht.png">
+<meta name="twitter:image" content="https://ckluis.github.io/bocht/assets/social.png">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" href="assets/series.css">
 </head>
 <body>
 <a href="https://ckluis.github.io/experiments/" class="xa-back" aria-label="Back to all experiments"><span class="xa-arrow">←</span> Experiments</a>
 <header class="hero">
   <div class="wrap">
-    <nav class="rail reveal" aria-label="The Bend series"><span class="rl">The Bend series</span><a href="../index.html"><span class="i">00</span>Series</a><a href="../bocht/index.html" aria-current="page"><span class="i">01</span>bocht</a><a href="../bochtCMS/index.html"><span class="i">02</span>bochtCMS</a><a href="../shellOS/index.html"><span class="i">03</span>shellOS</a></nav>
+    <nav class="rail reveal" aria-label="The Bend series"><span class="rl">The Bend series</span><a href="https://ckluis.github.io/experiments/bend/"><span class="i">00</span>Series</a><a href="https://ckluis.github.io/bocht/" aria-current="page"><span class="i">01</span>bocht</a><a href="https://ckluis.github.io/bochtCMS/"><span class="i">02</span>bochtCMS</a><a href="https://ckluis.github.io/shellOS/"><span class="i">03</span>shellOS</a></nav>
     <div>
       <div class="eyebrow reveal">01 · The framework · Sept 2026</div>
       <h1 class="reveal d1">bocht<span class="def">/bɔxt/ · Dutch, noun — a bend, a curve</span></h1>
@@ -39,7 +39,7 @@
       <p class="lede reveal d2">An AI app builder wrote a backend framework as a single Bend program: HTTP, auth,
         rate limits, a write-ahead log, REST and MCP, compiled through C into one native binary with no database,
         no proxy and no queue beside it. It shipped with a verification discipline worth stealing. This page is the
-        framework and that discipline; <a href="../bochtCMS/index.html" style="color:#fff">bochtCMS</a> is the app
+        framework and that discipline; <a href="https://ckluis.github.io/bochtCMS/" style="color:#fff">bochtCMS</a> is the app
         built on top, and the curve its tests missed.</p>
       <div class="hstats reveal d3">
         <div><div class="n">8,777</div><div class="l">lines of Bend (r61)</div></div>
@@ -102,7 +102,7 @@
         <ul>
           <li>Single node. No replication, sharding or consensus.</li>
           <li>The log survives the process dying, not the power going out.</li>
-          <li>One request at a time. A slow request blocks every client — which is why <a href="../bochtCMS/index.html#curve">the curve in bochtCMS</a> mattered.</li>
+          <li>One request at a time. A slow request blocks every client — which is why <a href="https://ckluis.github.io/bochtCMS/#curve">the curve in bochtCMS</a> mattered.</li>
           <li>Bend moves fast: the builder reports breaking changes in every release from 2.0.18 to 2.0.34, and the pinned r61 release doesn't build on 2.0.34 (confirmed).</li>
         </ul>
       </div>
@@ -152,7 +152,7 @@
     <div class="fact reveal d2"><div class="k">One node, one request</div><p>No replication, sharding or consensus, and requests run one at a time, so any slow request stalls every client.</p></div>
     <div class="fact reveal d3"><div class="k">Proof-ready, proof-free</div><p>Bend can check proofs about programs. Bocht writes none; its guarantees come from tests and manifests, not types.</p></div>
   </div>
-  <p class="note reveal">The full audit, including the curve, the builder's regressions and the one-function fix, is on the <a href="../bochtCMS/index.html">bochtCMS</a> page.</p>
+  <p class="note reveal">The full audit, including the curve, the builder's regressions and the one-function fix, is on the <a href="https://ckluis.github.io/bochtCMS/">bochtCMS</a> page.</p>
 </div></section>
 
 <!-- ============================ THE BEND SERIES ============================ -->
@@ -160,17 +160,17 @@
   <div class="eyebrow reveal">The Bend series</div>
   <h2 class="reveal d1">One language. Three builds. <em>One auditor.</em></h2>
   <p class="intro reveal d2">Three programs, one young language, one method. Each was written by an AI app builder in <a href="https://bend-lang.com" target="_blank" rel="noopener">Bend 2</a> under an evidence-first discipline, then handed to Claude Code to check: reproduce every claim, attack it, profile it, fix only what is proven, and show the fix changed nothing else. Every time, the builder's own tests passed, and something real was still wrong.</p>
-  <div class="scards"><div class="scard reveal here"><div class="n">01 · bocht</div><div class="t">bocht</div><p>The framework. A whole backend (HTTP, auth, rate limits, WAL storage, MCP) compiled from one Bend program into one binary.</p><div class="m"><span>8,777 lines</span><span>1 binary</span><span>release r61</span></div><div class="go">You are here</div></div><a class="scard reveal" href="../bochtCMS/index.html"><div class="n">02 · bochtCMS</div><div class="t">bochtCMS</div><p>The app on top. A blog CMS whose only interface is seven MCP tools, and the quadratic curve its 43 passing tests never saw.</p><div class="m"><span>7 MCP tools</span><span>1,200× fix</span><span>0 / 90 diffs</span></div><div class="go">Read the case study →</div></a><a class="scard reveal" href="../shellOS/index.html"><div class="n">03 · shellOS</div><div class="t">shellOS</div><p>The desktop. A single-window shell drawn pixel by pixel in pure Bend: terminal, reader, palette. Ported to a Mac and redesigned.</p><div class="m"><span>9,641 lines</span><span>17 C effects</span><span>3 bugs fixed</span></div><div class="go">Read the case study →</div></a></div>
-  <a class="all reveal" href="../index.html">About the series: the language, the method, what it found →</a>
+  <div class="scards"><div class="scard reveal here"><div class="n">01 · bocht</div><div class="t">bocht</div><p>The framework. A whole backend (HTTP, auth, rate limits, WAL storage, MCP) compiled from one Bend program into one binary.</p><div class="m"><span>8,777 lines</span><span>1 binary</span><span>release r61</span></div><div class="go">You are here</div></div><a class="scard reveal" href="https://ckluis.github.io/bochtCMS/"><div class="n">02 · bochtCMS</div><div class="t">bochtCMS</div><p>The app on top. A blog CMS whose only interface is seven MCP tools, and the quadratic curve its 43 passing tests never saw.</p><div class="m"><span>7 MCP tools</span><span>1,200× fix</span><span>0 / 90 diffs</span></div><div class="go">Read the case study →</div></a><a class="scard reveal" href="https://ckluis.github.io/shellOS/"><div class="n">03 · shellOS</div><div class="t">shellOS</div><p>The desktop. A single-window shell drawn pixel by pixel in pure Bend: terminal, reader, palette. Ported to a Mac and redesigned.</p><div class="m"><span>9,641 lines</span><span>17 C effects</span><span>3 bugs fixed</span></div><div class="go">Read the case study →</div></a></div>
+  <a class="all reveal" href="https://ckluis.github.io/experiments/bend/">About the series: the language, the method, what it found →</a>
 </div></section>
 
 <!-- ============================ FOOT ============================ -->
 <footer class="foot"><div class="wrap">
   <h2>One program. One binary. <em>Everything it claims, re-derivable from disk.</em></h2>
   <div class="credits"><div class="credit"><div class="k">Framework &amp; CMS</div><p>Generated by an AI app builder under its evidence-first methodology, in Bend 2.0.32–2.0.34.</p></div><div class="credit"><div class="k">Audit &amp; fix</div><p>Claude Code (Opus 5.5): reproduction, adversarial tests, profiling, the one-function fix, and the differential proof.</p></div><div class="credit"><div class="k">Direction</div><p>Chris Kluis: asked for the evaluation, rejected the builder's fix, and chose to publish the case study.</p></div></div>
-  <div class="links"><a href="https://bend-lang.com" target="_blank" rel="noopener">Bend ↗</a><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol ↗</a><a href="https://ckluis.github.io/experiments/">All experiments ↗</a></div>
-  <p class="fine">Status: local. The source and evaluation scripts live in a private repository for now. All timings measured on one Apple-silicon Mac, Bend 2.0.34, 29 Sep 2026. Absolute numbers will differ on other hardware; the slopes won't.</p>
+  <div class="links"><a href="https://github.com/ckluis/bocht" target="_blank" rel="noopener">Source on GitHub ↗</a><a href="https://bend-lang.com" target="_blank" rel="noopener">Bend ↗</a><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol ↗</a><a href="https://ckluis.github.io/experiments/">All experiments ↗</a></div>
+  <p class="fine">All timings measured on one Apple-silicon Mac, Bend 2.0.34, 29 Sep 2026. Absolute numbers will differ on other hardware; the slopes won't.</p>
 </div></footer>
-<script src="../assets/series.js"></script>
+<script src="assets/series.js"></script>
 </body>
 </html>

@@ -1,3 +1,6 @@
+> **Case study:** https://ckluis.github.io/bocht/ (part 1 of the [Bend series](https://ckluis.github.io/experiments/bend/): [bocht](https://github.com/ckluis/bocht) · [bochtCMS](https://github.com/ckluis/bochtCMS) · [shellOS](https://github.com/ckluis/shellOS)).
+> The page is `index.html` in this repo, served by GitHub Pages from `main`. Below: the builder's bundle README for release r61, kept as shipped.
+
 # Bocht source bundle — pinned release r61
 
 This is the actual framework source behind the Bocht site, packaged so the
