@@ -1,5 +1,17 @@
 > **Case study:** https://ckluis.github.io/bocht/ (part 1 of the [Bend series](https://ckluis.github.io/experiments/bend/): [bocht](https://github.com/ckluis/bocht) · [bochtCMS](https://github.com/ckluis/bochtCMS) · [shellOS](https://github.com/ckluis/shellOS)).
 > The page is `index.html` in this repo, served by GitHub Pages from `main`. Below: the builder's bundle README for release r61, kept as shipped.
+>
+> **Current toolchain: Bend 2.0.35** (5 Oct 2026). `bocht-r61.bend` carries two changes on top of r61: `TCP.listen` now takes a host
+> (needed to build after 2.0.32), and the quadratic `jf_raw_go` fix from bochtCMS. Build and test from this directory:
+>
+> ```
+> bend bocht-r61.bend -o medium/fresh/med_native_r61    # ~20 s on Apple silicon
+> python3 tests/item197/item197.py                      # RESULT: PASS=27 FAIL=0
+> ```
+>
+> The builder's README below says `src/` is newer than r61. Joined in part order (util, sha, types, net, parse, auth, store, evt,
+> svc, main), `src/` is the bochtCMS program line for line, MCP section included. `manifest_r61.txt`, `build-2034-check.log` and the
+> item197 result log are the builder's Linux evidence, kept as shipped.
 
 # Bocht source bundle — pinned release r61
 
