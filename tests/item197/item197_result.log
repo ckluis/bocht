@@ -1,0 +1,41 @@
+[19:06:39] item197 probe starting; BIN=/home/hatch/workspace/bocht/medium/fresh/med_native_r61
+[19:06:39] PASS T1-trailer-shape mac=45719d1979f8b615...
+[19:06:39] booted pid=162266 work=t1
+[19:06:39] PASS T1-boots port_open=True exited=False
+[19:06:39] PASS T1-no-fatal no FATAL in boot log
+[19:06:39] PASS T1-serves minted key
+[19:06:39] PASS T1-write st=201
+[19:06:40] booted pid=162279 work=t2
+[19:06:40] PASS T2-refuses port_open=False (want False)
+[19:06:40] PASS T2-hmac-fatal loud refusal
+[19:06:41] booted pid=162286 work=t3
+[19:06:41] PASS T3-refuses port_open=False
+[19:06:41] PASS T3-hmac-fatal HMAC mismatch in log
+[19:06:42] booted pid=162288 work=t4
+[19:06:43] PASS T4-refuses port_open=False
+[19:06:43] PASS T4-hmac-fatal HMAC mismatch in log
+[19:06:44] booted pid=162291 work=t5
+[19:06:44] PASS T5-refuses port_open=False
+[19:06:44] PASS T5-downgrade-fatal downgrade refusal
+[19:06:45] booted pid=162320 work=t6
+[19:06:45] PASS T6-boots port_open=True
+[19:06:45] PASS T6-warning migration warning
+[19:06:45] PASS T6-serves minted key
+[19:06:46] booted pid=162354 work=t7
+[19:06:46] PASS T7-boots port_open=True
+[19:06:46] PASS T7-notice rotation notice
+[19:06:46] PASS T7-serves minted key
+[19:06:47] booted pid=162360 work=t8
+[19:06:48] PASS T8-boots port_open=True
+[19:06:48] PASS T8-warning key-unset warning
+[19:06:48] PASS T8-serves minted key
+[19:06:49] booted pid=162388 work=t9
+[19:06:49] PASS T9-refuses port_open=False
+[19:06:49] PASS T9-count-fatal count FATAL in log
+[19:06:50] booted pid=162405 work=t10
+[19:06:50] PASS T10-boots port_open=True
+[19:07:13] T10: wrote 505/505 articles
+[19:07:15] PASS T10-mac-valid seq=500 count=998 mac_match=True
+[19:07:15] PASS T10-4fields trailer=SEQ	500	998	9ff919bae79717cae693d42d243d...
+[19:07:16] done: PASS=27 FAIL=0
+RESULT: PASS=27 FAIL=0
