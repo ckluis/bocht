@@ -8745,7 +8745,7 @@ def main_boot_ok(budget: Nat, ok: Bool, +st: MedState) -> IO(Unit):
     case False{}: IO.print("medium-fresh: startup aborted (WAL unavailable)\n")
     case True{}:
       do IO<Unit>:
-        lr : Result<&1, &1, U32 & String, Listener> <- TCP.listen(18081)
+        lr : Result<&1, &1, U32 & String, Listener> <- TCP.listen("127.0.0.1", 18081)
         main_listen_res(budget, lr, st)
 
 def main_boot(budget: Nat, bs: Bool & MedState) -> IO(Unit):

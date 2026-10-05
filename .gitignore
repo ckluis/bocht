@@ -1,0 +1,5 @@
+# Local build output and test scratch
+medium/
+tests/item197/work_item197/
+tests/item197/item197_probe.log
+tests/item197/item197_boot.log
