@@ -2098,18 +2098,34 @@ def jf_raw_end(+code: U32) -> Bool:
   Bool.or(U32.is_eq(code, 32),
   Bool.or(U32.is_eq(code, 9), Bool.or(U32.is_eq(code, 10), U32.is_eq(code, 13))))))
 
-def jf_raw_go(+cs: List<&2, Char>, +acc: List<&2, Char>) -> String:
+# acc holds the scanned chars reversed; when hit is set, its head is the
+# terminator that stopped the scan, so drop it before rebuilding.
+def jf_raw_fin(+acc: List<&2, Char>) -> String:
+  match acc:
+    case Nil{}: String.from_list(Nil{})
+    case h <> t: String.from_list(List.reverse(&2, Char, t))
+
+# PERF (O(n^2) fix): this was Bool.pick(end?, from_list(acc), recurse).
+# Bool.pick is strict, so every char rebuilt the whole prefix string AND
+# the scan never stopped at the terminator: mcp_id_json's "id":1 lookup
+# walked the rest of the request body. Now the terminator test for the
+# previous char is threaded in as hit and matched lazily (JfAct pattern),
+# so the scan stops at the terminator and builds the string once.
+def jf_raw_go(+cs: List<&2, Char>, +acc: List<&2, Char>, hit: Bool) -> String:
   match cs:
-    case Nil{}: String.from_list(List.reverse(&2, Char, acc))
+    case Nil{}:
+      match hit:
+        case True{}: jf_raw_fin(acc)
+        case False{}: String.from_list(List.reverse(&2, Char, acc))
     case h <> t:
-      Bool.pick(String, jf_raw_end(Char.to_u32(h)),
-        String.from_list(List.reverse(&2, Char, acc)),
-        jf_raw_go(t, h <> acc))
+      match hit:
+        case True{}: jf_raw_fin(acc)
+        case False{}: jf_raw_go(t, h <> acc, jf_raw_end(Char.to_u32(h)))
 
 def jf_val_any_go(is_q: Bool, +h: Char, +t: List<&2, Char>) -> Maybe<&1, String>:
   match is_q:
     case True{}: jf_str(t)
-    case False{}: Some{jf_raw_go(h <> t, Nil{})}
+    case False{}: Some{jf_raw_go(h <> t, Nil{}, False{})}
 
 def jf_val_any_head(+cs: List<&2, Char>) -> Maybe<&1, String>:
   match cs:
